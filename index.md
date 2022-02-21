@@ -18,6 +18,7 @@ This function is designed to make a Manhattan plot for GWAS.
 
 ```R
 source("https://raw.githubusercontent.com/oumarkme/GFUNC/main/manhattan.R")
+manhattan(gwrst, path = NULL)
 ```
 
 **Input**
