@@ -27,6 +27,6 @@ manhattan = function(gwrst, path = NULL){
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank()
         )
-    ggsave(paste0(path, "_asso.jpeg", p))
+    ggsave(paste0(path, "_asso.jpeg", p), width = 12, height = 5)
 }
 manhattan = cmpfun(manhattan)

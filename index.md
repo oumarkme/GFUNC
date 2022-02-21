@@ -28,4 +28,4 @@ manhattan(gwrst, path = NULL)
 
 **Output**
 
-- A Manhatten plot saved as `PATH_asso.jpeg`
+- A Manhattan plot saved as `PATH_asso.jpeg`
