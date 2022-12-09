@@ -20,7 +20,7 @@ manhattanPlot = function(asso, saveDir = NULL, pAdjust = 'none', cutRatio = 0, p
             geom_point( aes(color=as.factor(CHR)), alpha = pointAlpha, size = pointSize ) +
             scale_color_manual( values = rep(pointCol, length(unique(don$CHR))) ) +
             scale_x_continuous( label=axisdf$CHR, breaks=axisdf$center, name = 'Chromosome' ) +
-            scale_y_continuous( expand = c(0, 0), limits = c(min(asso$nlogFDR), round(max(asso$nlogFDR)*1.15)), name='-log10(q-value)') +
+            scale_y_continuous( expand = c(0, 0), limits = c(min(asso$nlogFDR), round(max(asso$nlogFDR)*1.1)), name='-log10(p-value)') +
             theme_bw() +
             theme(
                 legend.position='none',
@@ -31,7 +31,7 @@ manhattanPlot = function(asso, saveDir = NULL, pAdjust = 'none', cutRatio = 0, p
     }else{
         returnPlot = ggplot( asso, aes(x = BP/1e6, y = nlogFDR) ) +
             geom_point( color = pointCol[1], alpha = pointAlpha, size = pointSize) +
-            scale_y_continuous( expand = c(0, 0), limits = c(min(asso$nlogFDR), round(max(asso$nlogFDR)*1.1)), name='-log10(q-value)') +
+            scale_y_continuous( expand = c(0, 0), limits = c(min(asso$nlogFDR), round(max(asso$nlogFDR)*1.1)), name='-log10(p-value)') +
             scale_x_continuous( name = 'Position (Mb)') +
             theme_bw() +
                 theme(
