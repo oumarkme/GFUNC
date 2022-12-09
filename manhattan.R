@@ -1,32 +1,37 @@
 library(tidyverse)
 library(compiler)
 
-manhattan = function(gwrst, path = NULL){
-    if(is.null(path)) path = paste0(getwd(), "/plot")
-    
-    don <- gwrst %>%
+manhattanPlot = function(asso, pointAlpha = 0.8, pointSize = 0.8, pointCol = c('grey', 'skyblue'), saveDir = NULL){
+    asso = asso %>% mutate(nlogFDR = -log10(p.adjust(.$P, method = 'fdr')))
+    don = asso %>%
         group_by(CHR) %>%
-        summarise(chr_len = max(BP)) %>%
-        mutate(tot=cumsum(chr_len)-chr_len) %>%
+        summarise(chr_len=max(BP)) %>%
+        mutate(tot=cumsum(chr_len) - chr_len) %>%
         select(-chr_len) %>%
-        left_join(gwrst, ., by=c("CHR"="CHR")) %>%
+        left_join(asso, ., by=c("CHR"="CHR")) %>%
         arrange(CHR, BP) %>%
-        mutate(BPcum=BP+tot)
-    axisdf <- don %>%
-        group_by(CHR) %>% 
-        summarize(center=(max(BPcum) + min(BPcum) ) / 2)
-    p = ggplot(don, aes(x=BPcum, y=-log10(P))) +
-        geom_point(aes(color=as.factor(CHR)), alpha=0.8, size=1.3) +
-        scale_color_manual(values = rep(c("grey", "skyblue"), 22 )) +
-        scale_x_continuous(label = axisdf$CHR, breaks= axisdf$center) +
-        scale_y_continuous(expand = c(0, 0) ) +
+        mutate(BPcum = BP + tot)
+    axisdf = don %>%group_by(CHR) %>% summarise(center = (max(BPcum) + min(BPcum))/2)
+    
+    returnPlot = ggplot( don, aes(x = BPcum, y = nlogFDR) ) +
+        geom_point( aes(color=as.factor(CHR)), alpha = pointAlpha, size = pointSize ) +
+        scale_color_manual( values = rep(pointCol, length(unique(don$CHR))) ) +
+        scale_x_continuous( label=axisdf$CHR, breaks=axisdf$center ) +
+        scale_y_continuous( expand = c(0, 0), limits = c(0, round(max(asso$nlogFDR)*1.25)) ) +
         theme_bw() +
-        theme( 
-            legend.position="none",
+        theme(
+            legend.position='none',
             panel.border = element_blank(),
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank()
         )
-    ggsave(paste0(path, "_asso.jpeg"), p, width = 12, height = 5)
+    
+    if(is.null(saveDir)){
+        return(returnPlot)
+    }else{
+        ggsave(saveDir, returnPlot, width = 20, height = 4)
+        cat(paste('Figure saved:', saveDir))
+    }
 }
-manhattan = cmpfun(manhattan)
+
+manhattanPlot = cmpfun(manhattanPlot)
